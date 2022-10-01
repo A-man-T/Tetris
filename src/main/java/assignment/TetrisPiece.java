@@ -12,8 +12,10 @@ import java.util.LinkedList;
  * need to do pre-computation in the constructor to make this possible.
  */
 public final class TetrisPiece implements Piece {
-    private int[][] box;
+    private int[][][] box;
     private Point[] body;
+    private PieceType type;
+    private int rotationIndex = 0;
     /**
      * Construct a tetris piece of the given type. The piece should be in its spawn orientation,
      * i.e., a rotation index of 0.
@@ -22,24 +24,39 @@ public final class TetrisPiece implements Piece {
      * the runner code and testing code.
      */
     public TetrisPiece(PieceType type) {
-        box = new int[(int)type.getBoundingBox().getWidth()][(int)type.getBoundingBox().getHeight()];
+        box = new int[4][(int)type.getBoundingBox().getWidth()][(int)type.getBoundingBox().getHeight()];
         body = type.getSpawnBody();
+
+        for (Point point : body) {
+            box[0][point.x][point.y] = 1;
+        }
+        box[1] = Helper.rotateMatrixRight(box[0]);
+        box[2] = Helper.rotateMatrixRight(box[1]);
+        box[3] = Helper.rotateMatrixRight(box[2]);
+
+        this.type = type;
     }
 
     @Override
     public PieceType getType() {
-        return null;
+        return this.type;
     }
 
     @Override
     public int getRotationIndex() {
-        // TODO: Implement me.
-        return -1;
+        return rotationIndex;
     }
 
     @Override
     public Piece clockwisePiece() {
-        // TODO: Implement me.
+        rotationIndex++;
+        if (rotationIndex == 0) {
+            return new TetrisPiece(type);
+        }
+
+        if (rotationIndex > 4) {
+            rotationIndex = 0;
+        }
         return null;
     }
 
