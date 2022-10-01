@@ -1,6 +1,7 @@
 package assignment;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * An immutable representation of a tetris piece in a particular rotation.
@@ -11,7 +12,8 @@ import java.awt.*;
  * need to do pre-computation in the constructor to make this possible.
  */
 public final class TetrisPiece implements Piece {
-
+    private int[][] box;
+    private Point[] body;
     /**
      * Construct a tetris piece of the given type. The piece should be in its spawn orientation,
      * i.e., a rotation index of 0.
@@ -20,12 +22,12 @@ public final class TetrisPiece implements Piece {
      * the runner code and testing code.
      */
     public TetrisPiece(PieceType type) {
-        // TODO: Implement me.
+        box = new int[(int)type.getBoundingBox().getWidth()][(int)type.getBoundingBox().getHeight()];
+        body = type.getSpawnBody();
     }
 
     @Override
     public PieceType getType() {
-        // TODO: Implement me.
         return null;
     }
 
@@ -49,20 +51,17 @@ public final class TetrisPiece implements Piece {
 
     @Override
     public int getWidth() {
-        // TODO: Implement me.
-        return -1;
+        return box[0].length;
     }
 
     @Override
     public int getHeight() {
-        // TODO: Implement me.
-        return -1;
+        return box.length;
     }
 
     @Override
     public Point[] getBody() {
-        // TODO: Implement me.
-        return null;
+        return body;
     }
 
     @Override

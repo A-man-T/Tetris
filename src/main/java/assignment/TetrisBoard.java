@@ -9,23 +9,35 @@ import java.awt.*;
  */
 public final class TetrisBoard implements Board {
 
+    private Piece cp;
+    Point pos;
+    Piece.PieceType grid[][];
+
     // JTetris will use this constructor
     public TetrisBoard(int width, int height) {}
 
     @Override
-    public Result move(Action act) { return Result.NO_PIECE; }
+    public Result move(Action act) {
+        if (act == Action.DOWN) {
+
+        }
+        return Result.NO_PIECE;
+    }
 
     @Override
     public Board testMove(Action act) { return null; }
 
     @Override
-    public Piece getCurrentPiece() { return null; }
+    public Piece getCurrentPiece() { return cp; }
 
     @Override
-    public Point getCurrentPiecePosition() { return null; }
+    public Point getCurrentPiecePosition() { return pos; }
 
     @Override
-    public void nextPiece(Piece p, Point spawnPosition) {}
+    public void nextPiece(Piece p, Point spawnPosition) {
+        this.cp = p;
+        this.pos = spawnPosition;
+    }
 
     @Override
     public boolean equals(Object other) { return false; }
