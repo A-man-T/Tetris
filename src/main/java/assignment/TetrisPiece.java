@@ -1,6 +1,7 @@
 package assignment;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -16,6 +17,8 @@ public final class TetrisPiece implements Piece {
     private Point[] body;
     private PieceType type;
     private int rotationIndex = 0;
+    private ArrayList<Point[]> bodies = new ArrayList<>();
+    private int size = 0;
     /**
      * Construct a tetris piece of the given type. The piece should be in its spawn orientation,
      * i.e., a rotation index of 0.
@@ -29,10 +32,25 @@ public final class TetrisPiece implements Piece {
 
         for (Point point : body) {
             box[0][point.x][point.y] = 1;
+            size++;
         }
         box[1] = Helper.rotateMatrixRight(box[0]);
         box[2] = Helper.rotateMatrixRight(box[1]);
         box[3] = Helper.rotateMatrixRight(box[2]);
+
+        for (int i = 0; i < box.length; i++) {
+            Point[] temp = new Point[size];
+            int m = 0;
+            for (int j = 0; j < box[i].length; j++) {
+                for (int k = 0; k < box[i][j].length; k++) {
+                    if (box[i][j][k] == 1) {
+                        temp[m] = new Point(k, j);
+                        m++;
+                    }
+                }
+            }
+            bodies.add(temp);
+        }
 
         this.type = type;
     }
@@ -49,31 +67,54 @@ public final class TetrisPiece implements Piece {
 
     @Override
     public Piece clockwisePiece() {
+        TetrisPiece rotated = new TetrisPiece(type);
         rotationIndex++;
+        rotationIndex %= 4;
         if (rotationIndex == 0) {
-            return new TetrisPiece(type);
+            rotated.body = bodies.get(0);
         }
-
-        if (rotationIndex > 4) {
-            rotationIndex = 0;
+        else if (rotationIndex == 1) {
+            rotated.body = bodies.get(1);
         }
-        return null;
+        else if (rotationIndex == 2) {
+            rotated.body = bodies.get(2);
+        }
+        else if (rotationIndex == 3) {
+            rotated.body = bodies.get(3);
+        }
+        return rotated;
     }
 
     @Override
     public Piece counterclockwisePiece() {
-        // TODO: Implement me.
-        return null;
+        TetrisPiece rotated = new TetrisPiece(type);
+        rotationIndex--;
+        if (rotationIndex < 0) {
+            rotationIndex = 3;
+        }
+        if (rotationIndex == 0) {
+            rotated.body = bodies.get(0);
+        }
+        else if (rotationIndex == 1) {
+            rotated.body = bodies.get(1);
+        }
+        else if (rotationIndex == 2) {
+            rotated.body = bodies.get(2);
+        }
+        else if (rotationIndex == 3) {
+            rotated.body = bodies.get(3);
+        }
+        return rotated;
     }
 
     @Override
     public int getWidth() {
-        return box[0].length;
+        return box[0][0].length;
     }
 
     @Override
     public int getHeight() {
-        return box.length;
+        return box[0].length;
     }
 
     @Override

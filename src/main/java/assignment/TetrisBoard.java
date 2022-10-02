@@ -14,7 +14,7 @@ public final class TetrisBoard implements Board {
     Piece.PieceType grid[][];
 
     // JTetris will use this constructor
-    public TetrisBoard(int width, int height) {}
+    public TetrisBoard(int width, int height) {grid = new Piece.PieceType[height][width];}
 
     @Override
     public Result move(Action act) {
@@ -52,23 +52,42 @@ public final class TetrisBoard implements Board {
     public int getRowsCleared() { return -1; }
 
     @Override
-    public int getWidth() { return -1; }
+    public int getWidth() { return grid[0].length;}
 
     @Override
-    public int getHeight() { return -1; }
+    public int getHeight() { return grid.length; }
 
     @Override
     public int getMaxHeight() { return -1; }
 
     @Override
-    public int dropHeight(Piece piece, int x) { return -1; }
+    public int dropHeight(Piece piece, int x) {
+        return -1;
+    }
 
     @Override
-    public int getColumnHeight(int x) { return -1; }
+    public int getColumnHeight(int x) {
+        int count = 0;
+        int i = grid.length-1;
+        while (grid[i][x] == null) {
+            count++;
+        }
+        return count;
+    }
 
     @Override
-    public int getRowWidth(int y) { return -1; }
+    public int getRowWidth(int y) {
+        int count = 0;
+        for (Piece.PieceType i :grid[grid.length-y]) {
+            if (i == (null)) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     @Override
-    public Piece.PieceType getGrid(int x, int y) { return null; }
+    public Piece.PieceType getGrid(int x, int y) {
+        return grid[grid.length-y][x];
+    }
 }
