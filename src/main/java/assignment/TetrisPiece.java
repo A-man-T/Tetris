@@ -2,7 +2,6 @@ package assignment;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * An immutable representation of a tetris piece in a particular rotation.
@@ -19,6 +18,7 @@ public final class TetrisPiece implements Piece {
     private int rotationIndex = 0;
     private ArrayList<Point[]> bodies = new ArrayList<>();
     private int size = 0;
+    private int[] skirt;
     /**
      * Construct a tetris piece of the given type. The piece should be in its spawn orientation,
      * i.e., a rotation index of 0.
@@ -29,14 +29,15 @@ public final class TetrisPiece implements Piece {
     public TetrisPiece(PieceType type) {
         box = new int[4][(int)type.getBoundingBox().getWidth()][(int)type.getBoundingBox().getHeight()];
         body = type.getSpawnBody();
+        skirt = new int[box[0][0].length];
 
         for (Point point : body) {
-            box[0][point.x][point.y] = 1;
+            box[0][box[0].length-point.y-1][point.x] = 1;
             size++;
         }
-        box[1] = Helper.rotateMatrixRight(box[0]);
-        box[2] = Helper.rotateMatrixRight(box[1]);
-        box[3] = Helper.rotateMatrixRight(box[2]);
+        box[1] = Helper.rotateClockwise(box[0]);
+        box[2] = Helper.rotateClockwise(box[1]);
+        box[3] = Helper.rotateClockwise(box[2]);
 
         for (int i = 0; i < box.length; i++) {
             Point[] temp = new Point[size];
@@ -44,12 +45,28 @@ public final class TetrisPiece implements Piece {
             for (int j = 0; j < box[i].length; j++) {
                 for (int k = 0; k < box[i][j].length; k++) {
                     if (box[i][j][k] == 1) {
-                        temp[m] = new Point(k, j);
+                        temp[m] = new Point(box[j].length-j-1, k);
                         m++;
                     }
                 }
             }
             bodies.add(temp);
+        }
+
+        for (int i = 0; i < skirt.length; i++) {
+            int height = 0;
+            while (height < skirt.length) {
+                if (box[0][box[0].length-height-1][i] == 1) {
+                    break;
+                }
+                height++;
+            }
+            skirt[i] = height;
+        }
+        for (int i: skirt) {
+            if (i == skirt.length) {
+                i = Integer.MAX_VALUE;
+            }
         }
 
         this.type = type;
@@ -69,7 +86,7 @@ public final class TetrisPiece implements Piece {
     public Piece clockwisePiece() {
         TetrisPiece rotated = new TetrisPiece(type);
         rotationIndex++;
-        rotationIndex %= 4;
+        rotationIndex = rotationIndex%4;
         if (rotationIndex == 0) {
             rotated.body = bodies.get(0);
         }
@@ -124,8 +141,7 @@ public final class TetrisPiece implements Piece {
 
     @Override
     public int[] getSkirt() {
-        // TODO: Implement me.
-        return null;
+        return skirt;
     }
 
     @Override

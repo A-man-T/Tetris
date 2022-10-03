@@ -18,10 +18,48 @@ public final class TetrisBoard implements Board {
 
     @Override
     public Result move(Action act) {
-        if (act == Action.DOWN) {
-
+        Result result = Result.NO_PIECE;
+        switch (act) {
+            case CLOCKWISE -> {
+                cp = cp.clockwisePiece();
+                result = Result.SUCCESS;
+            }
+            case COUNTERCLOCKWISE -> {
+                cp = cp.counterclockwisePiece();
+                result = Result.SUCCESS;
+            }
+            case LEFT -> {
+                if (pos.x == 0) {
+                    result = Result.OUT_BOUNDS;
+                }
+                else {
+                    pos = new Point(pos.x - 1, pos.y);
+                    result = Result.SUCCESS;
+                }
+            }
+            case RIGHT -> {
+                if (pos.x+cp.getWidth() == getWidth()) {
+                    result = Result.OUT_BOUNDS;
+                }
+                else {
+                    pos = new Point(pos.x+1, pos.y);
+                    result = Result.SUCCESS;
+                }
+            }
+            case DOWN -> {
+                if (Helper.howMuchLower(this, cp.getSkirt(), pos)) {
+                    this.grid = (Helper.place(grid, cp.getBody(), pos, cp.getType(), this)).clone();
+                    result = Result.PLACE;
+                    break;
+                }
+                pos = new Point(pos.x, pos.y-1);
+                result = Result.SUCCESS;
+            }
+            case NOTHING -> {
+            }
         }
-        return Result.NO_PIECE;
+
+        return result;
     }
 
     @Override
@@ -58,7 +96,13 @@ public final class TetrisBoard implements Board {
     public int getHeight() { return grid.length; }
 
     @Override
-    public int getMaxHeight() { return -1; }
+    public int getMaxHeight() {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < getWidth(); i++) {
+            max = Math.max(max, getColumnHeight(i));
+        }
+        return max;
+    }
 
     @Override
     public int dropHeight(Piece piece, int x) {
@@ -68,18 +112,20 @@ public final class TetrisBoard implements Board {
     @Override
     public int getColumnHeight(int x) {
         int count = 0;
-        int i = grid.length-1;
-        while (grid[i][x] == null) {
+        for (int i = getHeight()-1; i >= 0; i--) {
+            if (grid[i][x] != null) {
+                break;
+            }
             count++;
         }
-        return count;
+        return getHeight()-count;
     }
 
     @Override
     public int getRowWidth(int y) {
         int count = 0;
-        for (Piece.PieceType i :grid[grid.length-y]) {
-            if (i == (null)) {
+        for (Piece.PieceType i :grid[y]) {
+            if (i != (null)) {
                 count++;
             }
         }
@@ -88,6 +134,6 @@ public final class TetrisBoard implements Board {
 
     @Override
     public Piece.PieceType getGrid(int x, int y) {
-        return grid[grid.length-y][x];
+        return grid[y][x];
     }
 }
