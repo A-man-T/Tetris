@@ -2,6 +2,7 @@ package assignment;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * An immutable representation of a tetris piece in a particular rotation.
@@ -45,13 +46,14 @@ public final class TetrisPiece implements Piece {
             for (int j = 0; j < box[i].length; j++) {
                 for (int k = 0; k < box[i][j].length; k++) {
                     if (box[i][j][k] == 1) {
-                        temp[m] = new Point(box[j].length-j-1, k);
+                        temp[m] = new Point(box[i].length-j-1, k);
                         m++;
                     }
                 }
             }
             bodies.add(temp);
         }
+
 
         for (int i = 0; i < skirt.length; i++) {
             int height = 0;
@@ -72,6 +74,30 @@ public final class TetrisPiece implements Piece {
         this.type = type;
     }
 
+    public TetrisPiece(ArrayList<Point[]> bodies, PieceType type, int rotationIndex, int[][][] box, int[] skirt) {
+        this.box = box;
+        this.rotationIndex = rotationIndex;
+        this.type = type;
+        this.bodies = bodies;
+        this.skirt = skirt;
+        this.body = bodies.get(rotationIndex);
+        for (int i = 0; i < skirt.length; i++) {
+            int height = 0;
+            while (height < skirt.length) {
+                if (box[this.rotationIndex][box[this.rotationIndex].length-height-1][i] == 1) {
+                    break;
+                }
+                height++;
+            }
+            skirt[i] = height;
+        }
+        for (int i: skirt) {
+            if (i == skirt.length) {
+                i = Integer.MAX_VALUE;
+            }
+        }
+    }
+
     @Override
     public PieceType getType() {
         return this.type;
@@ -84,20 +110,24 @@ public final class TetrisPiece implements Piece {
 
     @Override
     public Piece clockwisePiece() {
-        TetrisPiece rotated = new TetrisPiece(type);
+        TetrisPiece rotated = null;
         rotationIndex++;
         rotationIndex = rotationIndex%4;
         if (rotationIndex == 0) {
-            rotated.body = bodies.get(0);
+            rotated = new TetrisPiece(bodies, type, rotationIndex, box, skirt);
+            System.out.println(Arrays.toString(bodies.get(0)));
         }
         else if (rotationIndex == 1) {
-            rotated.body = bodies.get(1);
+            rotated = new TetrisPiece(bodies, type, rotationIndex, box, skirt);
+            System.out.println(Arrays.toString(bodies.get(1)));
         }
         else if (rotationIndex == 2) {
-            rotated.body = bodies.get(2);
+            rotated = new TetrisPiece(bodies, type, rotationIndex, box, skirt);
+            System.out.println(Arrays.toString(bodies.get(2)));
         }
         else if (rotationIndex == 3) {
-            rotated.body = bodies.get(3);
+            rotated = new TetrisPiece(bodies, type, rotationIndex, box, skirt);
+            System.out.println(Arrays.toString(bodies.get(3)));
         }
         return rotated;
     }
