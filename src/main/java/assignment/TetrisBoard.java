@@ -22,6 +22,25 @@ public final class TetrisBoard implements Board {
     public Result move(Action act) {
         Result result = Result.NO_PIECE;
         switch (act) {
+            case DROP -> {
+                int drop = Integer.MAX_VALUE;
+                for (int i = 0; i < cp.getSkirt().length; i++) {
+                    if (cp.getSkirt()[i] == Integer.MAX_VALUE || cp.getSkirt()[i] == Integer.MIN_VALUE) {
+                        continue;
+                    }
+                    int j = pos.y+cp.getSkirt()[i]-1;
+                    int count = 0;
+                    while (j >=0 && getGrid(pos.x+i, j)== null) {
+                        count++;
+                        j--;
+                        System.out.println(count +" " +j);
+                    }
+                    drop = Math.min(drop, count);
+                    System.out.println(drop);
+                }
+                this.grid = (place(grid, cp.getBody(), new Point(pos.x, pos.y-drop), cp.getType(), this)).clone();
+                result = Result.PLACE;
+            }
             case CLOCKWISE -> {
                 Piece temp = cp.clockwisePiece();
                 Point[] translation;
@@ -35,7 +54,6 @@ public final class TetrisBoard implements Board {
                 for (Point p : translation) {
                     boolean isInBound = true;
                     for (Point b : temp.getBody()) {
-                        System.out.println(isInBound);
                         fake = new Point(p.x+b.x + pos.x, p.y+b.y + pos.y);
                         if (fake.x >= getWidth() || fake.x < 0 || fake.y < 0 || getGrid(fake.x, fake.y)!= null) {
                             isInBound = false;
@@ -54,8 +72,34 @@ public final class TetrisBoard implements Board {
                 }
             }
             case COUNTERCLOCKWISE -> {
-                cp = cp.counterclockwisePiece();
-                result = Result.SUCCESS;
+                Piece temp = cp.counterclockwisePiece();
+                Point[] translation;
+                Point fake;
+                if (temp.getType() == Piece.PieceType.STICK) {
+                    translation = Piece.I_COUNTERCLOCKWISE_WALL_KICKS[cp.getRotationIndex()];
+                }
+                else {
+                    translation = Piece.NORMAL_COUNTERCLOCKWISE_WALL_KICKS[cp.getRotationIndex()];
+                }
+                for (Point p : translation) {
+                    boolean isInBound = true;
+                    for (Point b : temp.getBody()) {
+                        fake = new Point(p.x+b.x + pos.x, p.y+b.y + pos.y);
+                        if (fake.x >= getWidth() || fake.x < 0 || fake.y < 0 || getGrid(fake.x, fake.y)!= null) {
+                            isInBound = false;
+                            break;
+                        }
+                    }
+                    if (isInBound) {
+                        cp = temp;
+                        pos = new Point(pos.x+p.x, pos.y+p.y);
+                        result = Result.SUCCESS;
+                        break;
+                    }
+                }
+                if (result == Result.NO_PIECE) {
+                    result = Result.OUT_BOUNDS;
+                }
             }
             case LEFT -> {
                 if (checkLeft()) {
@@ -231,35 +275,6 @@ public final class TetrisBoard implements Board {
             }
 
             else if (getGrid(pos.x + cp.getWidth() - rightskirt[i]+1, pos.y+i) != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean outOfBounds(Piece p, Point pos) {
-        int[] rightskirt = rightSkirt();
-        int[] leftskirt = leftSkirt();
-        for (int i = 0; i < rightskirt.length; i++) {
-            if (rightskirt[i] == Integer.MIN_VALUE) continue;
-            if (pos.x+cp.getWidth()-rightskirt[i] >= this.grid[0].length-1) {
-                return true;
-            }
-        }
-        for (int i = 0; i < leftskirt.length; i++) {
-            if (leftskirt[i] == Integer.MAX_VALUE) continue;
-            if (pos.x+leftskirt[i] <= 0) {
-                return true;
-            }
-        }
-        for (int i = 0; i < p.getSkirt().length; i++) {
-            if (p.getSkirt()[i] == Integer.MAX_VALUE) continue;
-            if (pos.y+p.getSkirt()[i] == 0) {
-                return true;
-            }
-        }
-        for (Point point : p.getBody()) {
-            if (grid[point.y+pos.y][point.x+pos.x] != null) {
                 return true;
             }
         }
