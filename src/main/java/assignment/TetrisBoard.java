@@ -18,9 +18,19 @@ public final class TetrisBoard implements Board {
     // JTetris will use this constructor
     public TetrisBoard(int width, int height) {grid = new Piece.PieceType[height][width];numCleared = 0;}
 
+    private TetrisBoard(Piece.PieceType[][] grid, int numCleared, Piece cp, Point pos) {
+        this.cp = cp;
+        this.grid = grid.clone();
+        this.pos = pos;
+        this.numCleared = numCleared;
+    }
+
     @Override
     public Result move(Action act) {
         Result result = Result.NO_PIECE;
+        if (cp == null) {
+            return result;
+        }
         switch (act) {
             case DROP -> {
                 int drop = Integer.MAX_VALUE;
@@ -33,10 +43,8 @@ public final class TetrisBoard implements Board {
                     while (j >=0 && getGrid(pos.x+i, j)== null) {
                         count++;
                         j--;
-                        System.out.println(count +" " +j);
                     }
                     drop = Math.min(drop, count);
-                    System.out.println(drop);
                 }
                 this.grid = (place(grid, cp.getBody(), new Point(pos.x, pos.y-drop), cp.getType(), this)).clone();
                 result = Result.PLACE;
@@ -136,7 +144,11 @@ public final class TetrisBoard implements Board {
     }
 
     @Override
-    public Board testMove(Action act) { return null; }
+    public Board testMove(Action act) {
+        TetrisBoard board = this.copy();
+        board.move(act);
+        return board;
+    }
 
     @Override
     public Piece getCurrentPiece() { return cp; }
@@ -267,7 +279,7 @@ public final class TetrisBoard implements Board {
 
     private boolean checkRight() {
         int[] rightskirt = rightSkirt();
-        System.out.println(Arrays.toString(rightskirt));
+
         for (int i = 0; i < rightskirt.length; i++) {
             if (rightskirt[i] == Integer.MIN_VALUE) continue;
             if (pos.x+cp.getWidth()-rightskirt[i]+1 > this.grid[0].length) {
@@ -302,5 +314,9 @@ public final class TetrisBoard implements Board {
             rightskirt[i] = cp.getWidth()-rightskirt[i]-1;
         }
         return rightskirt;
+    }
+
+    private TetrisBoard copy() {
+        return new TetrisBoard(grid, numCleared, cp, pos);
     }
 }
