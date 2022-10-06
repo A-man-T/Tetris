@@ -270,11 +270,11 @@ public final class TetrisBoard implements Board {
         System.out.println(Arrays.toString(rightskirt));
         for (int i = 0; i < rightskirt.length; i++) {
             if (rightskirt[i] == Integer.MIN_VALUE) continue;
-            if (pos.x+cp.getWidth()-rightskirt[i] == this.grid[0].length-1) {
+            if (pos.x+cp.getWidth()-rightskirt[i]+1 > this.grid[0].length) {
                 return true;
             }
 
-            else if (getGrid(pos.x + cp.getWidth() - rightskirt[i]+1, pos.y+i) != null) {
+            else if (getGrid(pos.x + cp.getWidth() - rightskirt[i], pos.y+i) != null) {
                 return true;
             }
         }
@@ -294,7 +294,12 @@ public final class TetrisBoard implements Board {
         int[] rightskirt = new int[cp.getHeight()];
         Arrays.fill(rightskirt, Integer.MIN_VALUE);
         for (Point p : cp.getBody()) {
-            rightskirt[p.y] = cp.getWidth()-Math.max(p.x, rightskirt[p.y]);
+            System.out.println(p.x + " " + p.y);
+            rightskirt[p.y] = Math.max(p.x, rightskirt[p.y]);
+        }
+        for (int i = 0; i < rightskirt.length; i++) {
+            if (rightskirt[i] == Integer.MIN_VALUE) continue;
+            rightskirt[i] = cp.getWidth()-rightskirt[i]-1;
         }
         return rightskirt;
     }
