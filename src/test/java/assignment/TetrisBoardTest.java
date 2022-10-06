@@ -33,5 +33,7 @@ class TetrisBoardTest {
         assert (board.move(Board.Action.LEFT) == Board.Result.SUCCESS || board.move(Board.Action.LEFT) == Board.Result.OUT_BOUNDS);
         assert (board.move(Board.Action.RIGHT) == Board.Result.SUCCESS || board.move(Board.Action.RIGHT) == Board.Result.OUT_BOUNDS);
         assert (board.move(Board.Action.CLOCKWISE) == Board.Result.SUCCESS || board.move(Board.Action.CLOCKWISE) == Board.Result.OUT_BOUNDS);
+        assert (board.move(Board.Action.COUNTERCLOCKWISE) == Board.Result.SUCCESS || board.move(Board.Action.COUNTERCLOCKWISE) == Board.Result.OUT_BOUNDS);
+        assert (board.move(Board.Action.DROP) == Board.Result.PLACE);
     }
 }

@@ -161,7 +161,6 @@ public final class TetrisPiece implements Piece {
         if(!(other instanceof TetrisPiece)) return false;
         TetrisPiece otherPiece = (TetrisPiece) other;
 
-        // TODO: Implement me.
-        return false;
+        return this.type.equals(otherPiece.type) && this.rotationIndex == otherPiece.rotationIndex;
     }
 }

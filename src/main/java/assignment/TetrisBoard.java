@@ -163,7 +163,23 @@ public final class TetrisBoard implements Board {
     }
 
     @Override
-    public boolean equals(Object other) { return false; }
+    public boolean equals(Object other) {
+        if(!(other instanceof TetrisBoard)) return false;
+        TetrisBoard otherBoard = (TetrisBoard) other;
+
+        boolean valid = true;
+        if (!this.getCurrentPiece().equals(otherBoard.getCurrentPiece())) valid = false;
+        if (this.getHeight() != otherBoard.getHeight()) valid = false;
+        if (this.getWidth() != otherBoard.getWidth()) valid = false;
+        if (!this.getCurrentPiecePosition().equals(otherBoard.getCurrentPiecePosition())) valid = false;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (this.getGrid(j, i) != otherBoard.getGrid(j, i)) valid = false;
+            }
+        }
+
+        return valid;
+    }
 
     @Override
     public Result getLastResult() { return Result.NO_PIECE; }
