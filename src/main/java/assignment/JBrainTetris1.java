@@ -6,15 +6,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
-public class JBrainTetris extends JTetris{
+public class JBrainTetris1 extends JTetris{
 
     private final Timer brainTimer;
     Brain dumb;
-    private final int BRAINDELAY = 100;
+    private final int BRAINDELAY = 400;
 
 
     public static void main(String[] args) {
-        createGUI(new JBrainTetris());
+        createGUI(new JBrainTetris1());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class JBrainTetris extends JTetris{
         brainTimer.stop();
     }
 
-    JBrainTetris() {
+    JBrainTetris1() {
 
         dumb = new GoodBrain();
 
