@@ -35,7 +35,7 @@ public class GoodBrain implements Brain {
         }
 
         // We want to return the first move on the way to the best Board
-        System.out.println("Highest Score: " +best + "index: "+bestIndex);
+        //System.out.println("Highest Score: " +best + "index: "+bestIndex);
 
         return firstMoves.get(bestIndex);
     }
@@ -156,13 +156,7 @@ public class GoodBrain implements Brain {
     }
 
     private int scoreBoard(Board newBoard) {
-        for (int i = 0; i < newBoard.getWidth(); i++) {
-            System.out.print(newBoard.getColumnHeight(i) + " ");
-        }
-        System.out.println();
-        System.out.println(newBoard.getMaxHeight());
         if(newBoard.getMaxHeight()> 20) {
-            System.out.println(0+"here");
             return Integer.MIN_VALUE;
         }
         //System.out.println(-50*aggregateHeight(newBoard)+75*(newBoard.getRowsCleared())-35*countHoles(newBoard)-18*bumpiness(newBoard));
