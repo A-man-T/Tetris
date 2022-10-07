@@ -77,7 +77,7 @@ public final class TetrisBoard implements Board {
                     boolean isInBound = true;
                     for (Point b : temp.getBody()) {
                         fake = new Point(p.x+b.x + pos.x, p.y+b.y + pos.y);
-                        if (fake.x >= getWidth() || fake.x < 0 || fake.y < 0 || getGrid(fake.x, fake.y)!= null) {
+                        if (fake.x >= getWidth() || fake.x < 0 || fake.y < 0 || fake.y >= grid.length || getGrid(fake.x, fake.y)!= null) {
                             isInBound = false;
                             break;
                         }
@@ -295,7 +295,7 @@ public final class TetrisBoard implements Board {
             i++;
         }
 
-
+/*
         for (Piece.PieceType[] p : grid) {
             for (Piece.PieceType t : p) {
                 System.out.print(t + " ");
@@ -303,6 +303,8 @@ public final class TetrisBoard implements Board {
             System.out.println();
         }
         System.out.println();
+
+ */
 
 
         return grid;

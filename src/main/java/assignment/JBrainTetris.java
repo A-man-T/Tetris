@@ -10,7 +10,7 @@ public class JBrainTetris extends JTetris{
 
     private final Timer brainTimer;
     Brain dumb;
-    private final int BRAINDELAY = 300;
+    private final int BRAINDELAY = 100;
 
 
     public static void main(String[] args) {
@@ -38,7 +38,7 @@ public class JBrainTetris extends JTetris{
 
     JBrainTetris() {
 
-        dumb = new LameBrain();
+        dumb = new GoodBrain();
 
         brainTimer = new javax.swing.Timer(BRAINDELAY, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
