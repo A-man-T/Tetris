@@ -10,6 +10,7 @@ import java.util.Arrays;
  */
 public final class TetrisBoard implements Board {
 
+    // private variables
     private Piece cp;
     private int numCleared;
     Point pos;
