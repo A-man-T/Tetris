@@ -71,7 +71,6 @@ public final class TetrisBoard implements Board {
                 }
                 this.grid = (place(grid, cp.getBody(), new Point(pos.x, pos.y-drop), cp.getType(), this)).clone();
                 result = Result.PLACE;
-                updateColsAndRows();
             }
             case CLOCKWISE -> {
                 Piece temp = cp.clockwisePiece();
@@ -155,7 +154,6 @@ public final class TetrisBoard implements Board {
                 if (howMuchLower(this, cp.getSkirt(), pos)) {
                     this.grid = (place(grid, cp.getBody(), pos, cp.getType(), this)).clone();
                     result = Result.PLACE;
-                    updateColsAndRows();
                     break;
                 }
                 pos = new Point(pos.x, pos.y-1);
@@ -164,6 +162,7 @@ public final class TetrisBoard implements Board {
             case NOTHING -> {
             }
         }
+        updateColsAndRows();
         lastResult = result;
         return result;
     }
@@ -199,7 +198,7 @@ public final class TetrisBoard implements Board {
 
     @Override
     public void nextPiece(Piece p, Point spawnPosition) {
-        if (spawnPosition.x < 0 || spawnPosition.x > grid[0].length-p.getWidth() || spawnPosition.y < 0 || spawnPosition.y > grid.length - p.getHeight() || p == null) {
+        if (spawnPosition.x < 0 || spawnPosition.x > grid[0].length-p.getWidth() || spawnPosition.y < 0 || spawnPosition.y > grid.length - p.getHeight()+1 || p == null) {
             System.err.print("Next piece spawns out of grid.");
             throw new IllegalArgumentException();
         }
@@ -283,25 +282,18 @@ public final class TetrisBoard implements Board {
         for (Point p : body) {
             grid[pos.y+p.y][pos.x+p.x] = type;
         }
-        int i = 0;
-        int m = grid.length;
-        while (i < m) {
-            if (board.getRowWidth(i) == 0) {
-                break;
-            }
-            if (board.getRowWidth(i) == grid[i].length) {
+        for (int i = grid.length-1; i>= 0; i--) {
+            updateColsAndRows();
+            if (getRowWidth(i) == grid[i].length) {
                 Arrays.fill(grid[i], null);
-                int k = i;
-                while (board.getRowWidth(k+1) != 0) {
-                    grid[k] = Arrays.copyOf(grid[k+1], grid[k+1].length);
-                    k++;
+                int n = i;
+                while (n < grid.length-1) {
+                    grid[n] = grid[n+1];
+                    n++;
                 }
-                grid[k] = Arrays.copyOf(grid[k+1], grid[k+1].length);
                 numCleared++;
-                i--;
-                m--;
+                updateColsAndRows();
             }
-            i++;
         }
 
 /*
