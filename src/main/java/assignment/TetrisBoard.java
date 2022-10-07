@@ -18,7 +18,14 @@ public final class TetrisBoard implements Board {
     Action lastAction;
 
     // JTetris will use this constructor
-    public TetrisBoard(int width, int height) {grid = new Piece.PieceType[height][width];numCleared = 0;}
+    public TetrisBoard(int width, int height) {
+        if (width <= 0 || height <= 0) {
+            System.err.print("Invalid grid dimensions.");
+            throw new IllegalArgumentException();
+        }
+        grid = new Piece.PieceType[height][width];
+        numCleared = 0;
+    }
 
     private TetrisBoard(Piece.PieceType[][] grid, int numCleared, Piece cp, Point pos, Result lastResult, Action lastAction) {
         this.cp = cp;
@@ -34,6 +41,7 @@ public final class TetrisBoard implements Board {
         lastAction = act;
         Result result = Result.NO_PIECE;
         if (cp == null) {
+            this.lastResult = result;
             return result;
         }
         switch (act) {
@@ -176,6 +184,10 @@ public final class TetrisBoard implements Board {
 
     @Override
     public void nextPiece(Piece p, Point spawnPosition) {
+        if (spawnPosition.x < 0 || spawnPosition.x > grid[0].length-p.getWidth() || spawnPosition.y < 0 || spawnPosition.y > grid.length - p.getHeight() || p == null) {
+            System.err.print("Next piece spawns out of grid.");
+            throw new IllegalArgumentException();
+        }
         this.cp = p;
         this.pos = spawnPosition;
     }
@@ -261,28 +273,37 @@ public final class TetrisBoard implements Board {
         for (Point p : body) {
             grid[pos.y+p.y][pos.x+p.x] = type;
         }
-        for (int i = 0; i < grid.length; i++) {
+        int i = 0;
+        int m = grid.length;
+        while (i < m) {
+            if (board.getRowWidth(i) == 0) {
+                break;
+            }
             if (board.getRowWidth(i) == grid[i].length) {
                 Arrays.fill(grid[i], null);
                 int k = i;
                 while (board.getRowWidth(k+1) != 0) {
-                    grid[k] = grid[k+1].clone();
+                    grid[k] = Arrays.copyOf(grid[k+1], grid[k+1].length);
                     k++;
                 }
+                grid[k] = Arrays.copyOf(grid[k+1], grid[k+1].length);
                 numCleared++;
+                i--;
+                m--;
             }
+            i++;
         }
-       /*
 
-        for (Piece.PieceType[] i : grid) {
-            for (Piece.PieceType t : i) {
+
+        for (Piece.PieceType[] p : grid) {
+            for (Piece.PieceType t : p) {
                 System.out.print(t + " ");
             }
             System.out.println();
         }
         System.out.println();
 
-        */
+
         return grid;
     }
 
