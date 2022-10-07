@@ -14,19 +14,24 @@ public final class TetrisBoard implements Board {
     private int numCleared;
     Point pos;
     Piece.PieceType grid[][];
+    Result lastResult;
+    Action lastAction;
 
     // JTetris will use this constructor
     public TetrisBoard(int width, int height) {grid = new Piece.PieceType[height][width];numCleared = 0;}
 
-    private TetrisBoard(Piece.PieceType[][] grid, int numCleared, Piece cp, Point pos) {
+    private TetrisBoard(Piece.PieceType[][] grid, int numCleared, Piece cp, Point pos, Result lastResult, Action lastAction) {
         this.cp = cp;
-        this.grid = grid.clone();
+        this.grid = grid;
         this.pos = pos;
         this.numCleared = numCleared;
+        this.lastResult = lastResult;;
+        this.lastAction = lastAction;
     }
 
     @Override
     public Result move(Action act) {
+        lastAction = act;
         Result result = Result.NO_PIECE;
         if (cp == null) {
             return result;
@@ -139,13 +144,26 @@ public final class TetrisBoard implements Board {
             case NOTHING -> {
             }
         }
-
+        lastResult = result;
         return result;
     }
 
     @Override
     public Board testMove(Action act) {
-        TetrisBoard board = this.copy();
+
+
+        Piece.PieceType  newgrid[][] = new Piece.PieceType[grid.length][grid[0].length];
+        for(int y =0;y<grid.length;y++)
+            for(int x =0;x<grid[0].length;x++)
+                newgrid[y][x] = grid[y][x];
+
+        Point pos1;
+        pos1 = new Point((int)pos.getX(), (int)pos.getY());
+        Piece cp1 = cp;
+        Result r1 = lastResult;
+        Action a1 = lastAction;
+
+        TetrisBoard board = new TetrisBoard(newgrid, this.numCleared, cp1, pos1, r1,a1);
         board.move(act);
         return board;
     }
@@ -182,10 +200,10 @@ public final class TetrisBoard implements Board {
     }
 
     @Override
-    public Result getLastResult() { return Result.NO_PIECE; }
+    public Result getLastResult() { return this.lastResult; }
 
     @Override
-    public Action getLastAction() { return Action.NOTHING; }
+    public Action getLastAction() { return this.lastAction; }
 
     @Override
     public int getRowsCleared() { return numCleared; }
@@ -202,6 +220,7 @@ public final class TetrisBoard implements Board {
         for (int i = 0; i < getWidth(); i++) {
             max = Math.max(max, getColumnHeight(i));
         }
+        //System.out.println(max);
         return max;
     }
 
@@ -253,6 +272,8 @@ public final class TetrisBoard implements Board {
                 numCleared++;
             }
         }
+       /*
+
         for (Piece.PieceType[] i : grid) {
             for (Piece.PieceType t : i) {
                 System.out.print(t + " ");
@@ -260,6 +281,8 @@ public final class TetrisBoard implements Board {
             System.out.println();
         }
         System.out.println();
+
+        */
         return grid;
     }
 
@@ -322,7 +345,7 @@ public final class TetrisBoard implements Board {
         int[] rightskirt = new int[cp.getHeight()];
         Arrays.fill(rightskirt, Integer.MIN_VALUE);
         for (Point p : cp.getBody()) {
-            System.out.println(p.x + " " + p.y);
+            //System.out.println(p.x + " " + p.y);
             rightskirt[p.y] = Math.max(p.x, rightskirt[p.y]);
         }
         for (int i = 0; i < rightskirt.length; i++) {
@@ -333,6 +356,6 @@ public final class TetrisBoard implements Board {
     }
 
     private TetrisBoard copy() {
-        return new TetrisBoard(grid, numCleared, cp, pos);
+        return new TetrisBoard(grid, numCleared, cp, pos, lastResult,lastAction);
     }
 }
