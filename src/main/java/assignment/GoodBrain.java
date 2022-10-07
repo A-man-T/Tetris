@@ -22,7 +22,7 @@ public class GoodBrain implements Brain {
         enumerateOptions(currentBoard);
 
 
-        int best = 0;
+        int best = Integer.MIN_VALUE;
         int bestIndex = 0;
 
         // Check all of the options and get the one with the highest score
@@ -35,6 +35,8 @@ public class GoodBrain implements Brain {
         }
 
         // We want to return the first move on the way to the best Board
+        System.out.println("Highest Score: " +best + "index: "+bestIndex);
+
         return firstMoves.get(bestIndex);
     }
 
@@ -127,8 +129,46 @@ public class GoodBrain implements Brain {
      * we're going to give higher scores to Boards with
      * MaxHeights close to 0.
      */
+    private int aggregateHeight(Board newBoard) {
+        int total = 0;
+        for (int x = 0; x < newBoard.getWidth(); x++)
+            total += newBoard.getColumnHeight(x);
+        return total;
+    }
+
+
+    private int bumpiness(Board newBoard){
+        int total =0;
+        for (int x = 0; x < newBoard.getWidth()-1; x++)
+            total += Math.abs(newBoard.getColumnHeight(x)-newBoard.getColumnHeight(x+1));
+        return total;
+    }
+
+    private int countHoles(Board newBoard){
+        int total = 0;
+        for(int y =0; y<newBoard.getHeight()-1;y++) {
+            for (int x = 0; x < newBoard.getWidth(); x++) {
+                if ((newBoard.getGrid(x, y) != null) && (newBoard.getGrid(x, y + 1) == null))
+                    total++;
+            }
+        }
+        return total;
+    }
+
     private int scoreBoard(Board newBoard) {
-        return 100 - (newBoard.getMaxHeight() * 5) + newBoard.getRowsCleared()*5;
+        for (int i = 0; i < newBoard.getWidth(); i++) {
+            System.out.print(newBoard.getColumnHeight(i) + " ");
+        }
+        System.out.println();
+        System.out.println(newBoard.getMaxHeight());
+        if(newBoard.getMaxHeight()> 20) {
+            System.out.println(0+"here");
+            return Integer.MIN_VALUE;
+        }
+        //System.out.println(-50*aggregateHeight(newBoard)+75*(newBoard.getRowsCleared())-35*countHoles(newBoard)-18*bumpiness(newBoard));
+        //System.out.println(-50*aggregateHeight(newBoard)+75*(newBoard.getRowsCleared())+-35*countHoles(newBoard)+-18*bumpiness(newBoard));
+        return (-50*aggregateHeight(newBoard)+75*(newBoard.getRowsCleared())-35*countHoles(newBoard)-18*bumpiness(newBoard));
+        //return 100 - (newBoard.getMaxHeight() * 5)+newBoard.getRowsCleared()*100;
     }
 
 }

@@ -183,7 +183,7 @@ public final class TetrisBoard implements Board {
         Action a1 = lastAction;
         int[] cols = Arrays.copyOf(columnHeights, columnHeights.length);
         int[] rows = Arrays.copyOf(rowWidths, rowWidths.length);
-        int max = maxHeight;
+        int max = 0;
 
         TetrisBoard board = new TetrisBoard(newgrid, this.numCleared, cp1, pos1, r1,a1, cols, rows, max);
         board.move(act);
