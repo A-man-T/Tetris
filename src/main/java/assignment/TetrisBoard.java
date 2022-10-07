@@ -71,6 +71,7 @@ public final class TetrisBoard implements Board {
                 }
                 this.grid = (place(grid, cp.getBody(), new Point(pos.x, pos.y-drop), cp.getType(), this)).clone();
                 result = Result.PLACE;
+                updateColsAndRows();
             }
             case CLOCKWISE -> {
                 Piece temp = cp.clockwisePiece();
@@ -154,6 +155,7 @@ public final class TetrisBoard implements Board {
                 if (howMuchLower(this, cp.getSkirt(), pos)) {
                     this.grid = (place(grid, cp.getBody(), pos, cp.getType(), this)).clone();
                     result = Result.PLACE;
+                    updateColsAndRows();
                     break;
                 }
                 pos = new Point(pos.x, pos.y-1);
@@ -161,30 +163,6 @@ public final class TetrisBoard implements Board {
             }
             case NOTHING -> {
             }
-        }
-        for (int k = 0; k < columnHeights.length; k++) {
-            int count = 0;
-            for (int i = getHeight() - 1; i >= 0; i--) {
-                if (grid[i][k] != null) {
-                    break;
-                }
-                count++;
-            }
-            columnHeights[k] = count;
-        }
-
-        for (int i : columnHeights) {
-            maxHeight = Math.max(maxHeight, i);
-        }
-
-        for (int k = 0; k < rowWidths.length; k++) {
-            int count = 0;
-            for (Piece.PieceType i :grid[k]) {
-                if (i != (null)) {
-                    count++;
-                }
-            }
-            rowWidths[k] = count;
         }
         lastResult = result;
         return result;
@@ -410,7 +388,30 @@ public final class TetrisBoard implements Board {
         return rightskirt;
     }
 
-    private TetrisBoard copy() {
-        return new TetrisBoard(grid, numCleared, cp, pos, lastResult,lastAction, columnHeights, rowWidths, maxHeight);
+    private void updateColsAndRows() {
+        for (int k = 0; k < columnHeights.length; k++) {
+            int count = 0;
+            for (int i = getHeight() - 1; i >= 0; i--) {
+                if (grid[i][k] != null) {
+                    break;
+                }
+                count++;
+            }
+            columnHeights[k] = getHeight()-count;
+        }
+
+        for (int i : columnHeights) {
+            maxHeight = Math.max(maxHeight, i);
+        }
+
+        for (int k = 0; k < rowWidths.length; k++) {
+            int count = 0;
+            for (Piece.PieceType i :grid[k]) {
+                if (i != (null)) {
+                    count++;
+                }
+            }
+            rowWidths[k] = count;
+        }
     }
 }
