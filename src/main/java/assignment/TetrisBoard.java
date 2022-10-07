@@ -71,7 +71,6 @@ public final class TetrisBoard implements Board {
                 }
                 this.grid = (place(grid, cp.getBody(), new Point(pos.x, pos.y-drop), cp.getType(), this)).clone();
                 result = Result.PLACE;
-                updateColsAndRows();
             }
             case CLOCKWISE -> {
                 Piece temp = cp.clockwisePiece();
@@ -155,7 +154,6 @@ public final class TetrisBoard implements Board {
                 if (howMuchLower(this, cp.getSkirt(), pos)) {
                     this.grid = (place(grid, cp.getBody(), pos, cp.getType(), this)).clone();
                     result = Result.PLACE;
-                    updateColsAndRows();
                     break;
                 }
                 pos = new Point(pos.x, pos.y-1);
@@ -164,6 +162,7 @@ public final class TetrisBoard implements Board {
             case NOTHING -> {
             }
         }
+        updateColsAndRows();
         lastResult = result;
         return result;
     }
@@ -184,7 +183,7 @@ public final class TetrisBoard implements Board {
         Action a1 = lastAction;
         int[] cols = Arrays.copyOf(columnHeights, columnHeights.length);
         int[] rows = Arrays.copyOf(rowWidths, rowWidths.length);
-        int max = maxHeight;
+        int max = 0;
 
         TetrisBoard board = new TetrisBoard(newgrid, this.numCleared, cp1, pos1, r1,a1, cols, rows, max);
         board.move(act);
