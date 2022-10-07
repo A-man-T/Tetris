@@ -21,6 +21,7 @@ public class LameBrain implements Brain {
         firstMoves = new ArrayList<>();
         enumerateOptions(currentBoard);
 
+
         int best = 0;
         int bestIndex = 0;
 
@@ -54,6 +55,7 @@ public class LameBrain implements Brain {
             firstMoves.add(Board.Action.LEFT);
             left.move(Board.Action.LEFT);
         }
+
 
         // And then the same thing to the right
         Board right = currentBoard.testMove(Board.Action.RIGHT);
