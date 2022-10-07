@@ -288,13 +288,14 @@ public final class TetrisBoard implements Board {
                 Arrays.fill(grid[i], null);
                 int n = i;
                 while (n < grid.length-1) {
-                    grid[n] = grid[n+1];
+                    grid[n] = Arrays.copyOf(grid[n+1], grid[n+1].length);
                     n++;
                 }
                 numCleared++;
                 updateColsAndRows();
             }
         }
+        updateColsAndRows();
 
 /*
         for (Piece.PieceType[] p : grid) {
